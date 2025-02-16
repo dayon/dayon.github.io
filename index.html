@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>50 以内加减法口算练习</title>
+    <style>
+        /* 全局样式 */
+        body {
+            /* font-family: "Comic Sans MS", cursive, sans-serif; */
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            background-color: #f9f0e6;
+        }
+
+        /* 设置区域样式 */
+        .settings {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 设置项样式 */
+        .settings label {
+            margin-right: 10px;
+        }
+
+        .settings input,
+        .settings select {
+            margin-bottom: 10px;
+        }
+
+        /* 题目容器样式 */
+        .question-container {
+            text-align: left;
+            max-width: 400px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+
+        /* 题目项样式 */
+        .question-item {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            padding: 10px; /* 增加内边距，让样式更明显 */
+            transition: background-color 0.3s ease; /* 添加过渡效果 */
+        }
+
+        /* 定义当前选中行的样式 */
+        .question-item.selected {
+            background-color: #e0f7fa; /* 浅蓝色背景，可根据喜好调整 */
+            /* border-left: 4px solid #2196f3; 左边框突出显示 */
+        }
+
+        /* 超大字体显示题目 */
+        .question-item span {
+            font-size: 24px;
+        }
+
+        /* 答案输入框样式 */
+        .answer-input {
+            font-size: 16px;
+            width: 50px;
+            text-align: center;
+            margin-left: 10px;
+            margin-right: 10px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* 结果图标样式 */
+        .result-icon {
+            width: 20px;
+            height: 20px;
+            margin-left: 10px;
+        }
+
+        /* 数字按钮区域样式 */
+        .number-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            width: 300px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            align-self: start;
+        }
+
+        /* 数字按钮样式 */
+        .number-button {
+            font-size: 24px;
+            padding: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #e0e0e0;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .number-button:hover {
+            background-color: #d0d0d0;
+        }
+
+        /* 图标按钮样式 */
+        .icon-button {
+            font-size: 24px;
+            padding: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #e0e0e0;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .icon-button:hover {
+            background-color: #d0d0d0;
+        }
+
+        /* 回车按钮样式，占 3 个按钮大小 */
+        .enter-button {
+            grid-column: span 3;
+        }
+
+        /* 结果显示区域样式 */
+        .result {
+            font-size: 24px;
+            margin-top: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="settings" id="settings">
+        <div style="display: flex; align-items: center;">
+            <label for="question-count">题目数量：</label>
+            <!-- 将输入框替换为下拉选择框 -->
+            <select id="question-count">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+                <option value="40">40</option>
+                <option value="50">50</option>
+            </select>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <label for="add-percentage">加法百分比：</label>
+            <input type="number" id="add-percentage" value="50" min="0" max="100">
+        </div>
+        <div style="display: flex; align-items: center;">
+            <label for="sub-percentage">减法百分比：</label>
+            <input type="number" id="sub-percentage" value="50" min="0" max="100">
+        </div>
+        <div style="display: flex; align-items: center;">
+            <label for="operation-range">运算范围：</label>
+            <select id="operation-range">
+                <option value="10">&lt;10</option>
+                <option value="20">&lt;20</option>
+                <option value="100">&lt;100</option>
+            </select>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <label for="question-form">题目形式：</label>
+            <select id="question-form">
+                <option value="2">两个数</option>
+                <option value="3">三个数</option>
+                <option value="mixed">混合</option>
+            </select>
+        </div>
+        <button onclick="startPractice()">开始练习</button>
+    </div>
+    <div id="question-container" style="display: none;">
+        <div class="question-container" id="question-list"></div>
+        <div class="result" id="result"></div>
+    </div>
+    <div class="number-buttons" id="number-buttons" style="display: none;">
+        <button class="number-button" onclick="appendNumber(1)">1</button>
+        <button class="number-button" onclick="appendNumber(2)">2</button>
+        <button class="number-button" onclick="appendNumber(3)">3</button>
+        <button class="icon-button" onclick="moveToPrevQuestion()">
+            <img src="https://img.icons8.com/ios-glyphs/30/000000/up.png" alt="上一行">
+        </button>
+        <button class="number-button" onclick="appendNumber(4)">4</button>
+        <button class="number-button" onclick="appendNumber(5)">5</button>
+        <button class="number-button" onclick="appendNumber(6)">6</button>
+        <button class="icon-button" onclick="moveToNextQuestion()">
+            <img src="https://img.icons8.com/ios-glyphs/30/000000/down.png" alt="下一行">
+        </button>
+        <button class="number-button" onclick="appendNumber(7)">7</button>
+        <button class="number-button" onclick="appendNumber(8)">8</button>
+        <button class="number-button" onclick="appendNumber(9)">9</button>
+        <button class="icon-button" onclick="clearAnswer()">
+            <img src="https://img.icons8.com/fluent-systems-filled/24/000000/delete-sign.png" alt="清除">
+        </button>
+        <button class="number-button" onclick="appendNumber(0)">0</button>
+        <button class="icon-button enter-button" onclick="confirmAnswer()">
+            <img src="https://img.icons8.com/ios-glyphs/30/000000/enter-key.png" alt="回车">
+        </button>
+    </div>
+
+    <script>
+        let questions = [];
+        let currentIndex = 0;
+
+        function startPractice() {
+            // 修改获取题目数量的方式，从下拉框获取值
+            const questionCount = parseInt(document.getElementById('question-count').value);
+            const addPercentage = parseInt(document.getElementById('add-percentage').value);
+            const subPercentage = parseInt(document.getElementById('sub-percentage').value);
+            const operationRange = parseInt(document.getElementById('operation-range').value);
+            const questionForm = document.getElementById('question-form').value;
+
+            questions = generateQuestions(questionCount, addPercentage, subPercentage, operationRange, questionForm);
+            showQuestions();
+            document.getElementById('question-container').style.display = 'block';
+            document.getElementById('number-buttons').style.display = 'grid';
+            document.getElementById('settings').style.display = 'none';
+            focusOnCurrentQuestion();
+        }
+
+        function generateQuestions(count, addPercentage, subPercentage, operationRange, questionForm) {
+            const generatedQuestions = [];
+            for (let i = 0; i < count; i++) {
+                let operator;
+                if (Math.random() * 100 < addPercentage) {
+                    operator = '+';
+                } else {
+                    operator = '-';
+                }
+
+                let numCount;
+                if (questionForm === 'mixed') {
+                    numCount = Math.random() < 0.5 ? 2 : 3;
+                } else {
+                    numCount = parseInt(questionForm);
+                }
+
+                let nums = [];
+                for (let j = 0; j < numCount; j++) {
+                    nums.push(Math.floor(Math.random() * operationRange));
+                }
+
+                let question = nums[0];
+                for (let k = 1; k < numCount; k++) {
+                    question += ` ${operator} ${nums[k]}`;
+                }
+
+                const answer = eval(question);
+                if (answer >= 0) {
+                    generatedQuestions.push({ question, answer });
+                } else {
+                    i--; // 如果结果为负数，重新生成该题
+                }
+            }
+            return generatedQuestions;
+        }
+
+        function showQuestions() {
+            const questionList = document.getElementById('question-list');
+            questionList.innerHTML = '';
+            questions.forEach((question, index) => {
+                const questionItem = document.createElement('div');
+                questionItem.classList.add('question-item');
+                questionItem.innerHTML = `
+                    <span>${index + 1}. ${question.question} =</span>
+                    <input type="text" class="answer-input" id="answer-${index}" readonly>
+                    <img class="result-icon" id="result-icon-${index}" style="display: none;">
+                `;
+                questionList.appendChild(questionItem);
+            });
+        }
+
+        function focusOnCurrentQuestion() {
+            // 获取所有题目项
+            const questionItems = document.querySelectorAll('.question-item');
+            // 移除所有题目的选中样式
+            questionItems.forEach(item => item.classList.remove('selected'));
+            // 获取当前题目的元素
+            const currentQuestionItem = questionItems[currentIndex];
+            if (currentQuestionItem) {
+                // 为当前题目添加选中样式
+                currentQuestionItem.classList.add('selected');
+                // 让当前题目的输入框获取焦点
+                const input = document.getElementById(`answer-${currentIndex}`);
+                if (input) {
+                    input.focus();
+                }
+            }
+        }
+
+        function appendNumber(num) {
+            const input = document.getElementById(`answer-${currentIndex}`);
+            if (input) {
+                input.value += num;
+            }
+        }
+
+        function clearAnswer() {
+            const input = document.getElementById(`answer-${currentIndex}`);
+            if (input) {
+                input.value = '';
+            }
+        }
+
+        function moveToPrevQuestion() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                focusOnCurrentQuestion();
+            }
+        }
+
+        function moveToNextQuestion() {
+            if (currentIndex < questions.length - 1) {
+                currentIndex++;
+                focusOnCurrentQuestion();
+            }
+        }
+
+        function confirmAnswer() {
+            const input = document.getElementById(`answer-${currentIndex}`);
+            const resultIcon = document.getElementById(`result-icon-${currentIndex}`);
+            const userAnswer = parseInt(input.value);
+            const correctAnswer = questions[currentIndex].answer;
+            if (userAnswer === correctAnswer) {
+                resultIcon.src = 'https://img.icons8.com/color/48/000000/checkmark.png';
+                // resultIcon.style.filter = 'hue-rotate(120deg)'; // 变绿色
+            } else {
+                resultIcon.src = 'https://img.icons8.com/color/48/000000/cancel.png';
+                // resultIcon.style.filter = 'hue-rotate(0deg)'; // 红色保持不变
+            }
+            resultIcon.style.display = 'inline-block';
+            if (currentIndex < questions.length - 1) {
+                currentIndex++;
+                focusOnCurrentQuestion();
+            } else {
+                submitAnswers();
+            }
+        }
+
+        function submitAnswers() {
+            let correctCount = 0;
+            questions.forEach((question, index) => {
+                const userAnswer = parseInt(document.getElementById(`answer-${index}`).value);
+                if (userAnswer === question.answer) {
+                    correctCount++;
+                }
+            });
+            const totalQuestions = questions.length;
+            const score = (correctCount / totalQuestions) * 100;
+            const resultElement = document.getElementById('result');
+            resultElement.textContent = `你一共答对了 ${correctCount} 道题，得分：${score} 分。`;
+        }
+
+        // 监听键盘事件，支持回车键提交
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                confirmAnswer();
+            }
+        });
+    </script>
+</body>
+
+</html>
