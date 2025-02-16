@@ -8,104 +8,111 @@
     <style>
         /* 全局样式 */
         body {
-            /* font-family: "Comic Sans MS", cursive, sans-serif; */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding: 20px;
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
             justify-content: center;
-            background-color: #f9f0e6;
+            background-color: #f4f4f9;
+            color: #333;
         }
 
         /* 设置区域样式 */
         .settings {
             background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-width: 300px;
         }
 
         /* 设置项样式 */
         .settings label {
-            margin-right: 10px;
+            margin-right: 15px;
+            font-size: 18px;
         }
 
         .settings input,
         .settings select {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
 
         /* 题目容器样式 */
         .question-container {
             text-align: left;
-            max-width: 400px;
+            max-width: 450px;
             background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            max-height: calc(100vh - 80px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            max-height: calc(100vh - 100px);
             overflow-y: auto;
         }
 
         /* 题目项样式 */
         .question-item {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
-            padding: 10px; /* 增加内边距，让样式更明显 */
-            transition: background-color 0.3s ease; /* 添加过渡效果 */
+            padding: 15px;
+            transition: background-color 0.3s ease;
         }
 
         /* 定义当前选中行的样式 */
         .question-item.selected {
-            background-color: #e0f7fa; /* 浅蓝色背景，可根据喜好调整 */
-            /* border-left: 4px solid #2196f3; 左边框突出显示 */
+            background-color: #e8f4ff;
+            border-left: 4px solid #007bff;
         }
 
         /* 超大字体显示题目 */
         .question-item span {
-            font-size: 24px;
+            font-size: 28px;
         }
 
         /* 答案输入框样式 */
         .answer-input {
-            font-size: 16px;
-            width: 50px;
+            font-size: 18px;
+            width: 60px;
             text-align: center;
-            margin-left: 10px;
-            margin-right: 10px;
-            padding: 5px;
+            margin-left: 15px;
+            margin-right: 15px;
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
 
         /* 结果图标样式 */
         .result-icon {
-            width: 20px;
-            height: 20px;
-            margin-left: 10px;
+            width: 25px;
+            height: 25px;
+            margin-left: 15px;
         }
 
         /* 数字按钮区域样式 */
         .number-buttons {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            width: 300px;
+            gap: 15px;
+            width: 350px;
             background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
             align-self: start;
         }
 
         /* 数字按钮样式 */
         .number-button {
-            font-size: 24px;
-            padding: 5px;
+            font-size: 28px;
+            padding: 10px;
             border: none;
             border-radius: 5px;
             background-color: #e0e0e0;
@@ -120,8 +127,8 @@
 
         /* 图标按钮样式 */
         .icon-button {
-            font-size: 24px;
-            padding: 5px;
+            font-size: 28px;
+            padding: 10px;
             border: none;
             border-radius: 5px;
             background-color: #e0e0e0;
@@ -144,18 +151,44 @@
 
         /* 结果显示区域样式 */
         .result {
-            font-size: 24px;
-            margin-top: 20px;
+            font-size: 28px;
+            margin-top: 25px;
             color: #333;
+        }
+
+        /* 开始练习按钮样式 */
+        button {
+            padding: 12px 20px;
+            font-size: 18px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+        /* 新增版权信息样式 */
+        .copyright {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
         }
     </style>
 </head>
 
 <body>
+    <!-- 新增计时显示区域，初始隐藏 -->
+    <div id="timer" style="display: none; font-size: 28px; text-align: center; width: 100%;">已用时：0 秒</div>
+    <!-- 结果显示区域，初始隐藏 -->
+    <div id="top-result" style="display: none; font-size: 28px; text-align: center; width: 100%;"></div>
     <div class="settings" id="settings">
         <div style="display: flex; align-items: center;">
             <label for="question-count">题目数量：</label>
-            <!-- 将输入框替换为下拉选择框 -->
             <select id="question-count">
                 <option value="10">10</option>
                 <option value="20">20</option>
@@ -222,6 +255,8 @@
     <script>
         let questions = [];
         let currentIndex = 0;
+        let startTime; // 记录开始时间
+        let timerInterval; // 定时器
 
         function startPractice() {
             // 修改获取题目数量的方式，从下拉框获取值
@@ -237,6 +272,15 @@
             document.getElementById('number-buttons').style.display = 'grid';
             document.getElementById('settings').style.display = 'none';
             focusOnCurrentQuestion();
+            startTime = Date.now(); // 记录开始时间
+            document.getElementById('timer').style.display = 'block'; // 显示计时器
+            timerInterval = setInterval(updateTimer, 1000); // 每秒更新一次计时器
+        }
+
+        function updateTimer() {
+            const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+            const timerElement = document.getElementById('timer');
+            timerElement.textContent = `已用时：${elapsedTime} 秒`;
         }
 
         function generateQuestions(count, addPercentage, subPercentage, operationRange, questionForm) {
@@ -359,6 +403,8 @@
         }
 
         function submitAnswers() {
+            clearInterval(timerInterval); // 停止计时器
+            const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
             let correctCount = 0;
             questions.forEach((question, index) => {
                 const userAnswer = parseInt(document.getElementById(`answer-${index}`).value);
@@ -368,8 +414,9 @@
             });
             const totalQuestions = questions.length;
             const score = (correctCount / totalQuestions) * 100;
-            const resultElement = document.getElementById('result');
-            resultElement.textContent = `你一共答对了 ${correctCount} 道题，得分：${score} 分。`;
+            const resultElement = document.getElementById('top-result');
+            resultElement.textContent = `你一共答对了 ${correctCount} 道题，得分：${score} 分。答题用时：${elapsedTime} 秒`;
+            resultElement.style.display = 'block'; // 显示结果
         }
 
         // 监听键盘事件，支持回车键提交
@@ -379,6 +426,12 @@
             }
         });
     </script>
+</body>
+
+    <!-- 修改版权信息的 div 类名 -->
+    <div class="copyright">
+        © 2025 浩明专享版
+    </div>
 </body>
 
 </html>
